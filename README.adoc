@@ -1,0 +1,24 @@
+:keywords: appdb, lash, ladish, c, xdg
+
+= appdb
+
+.WORK IN PROGRESS
+[NOTE]
+This is Work In Progress.
+
+Application database via .desktop files
+
+appdb concept started in lash, then was adopted for ladish
+and now lives in this repository.
+
+Development happens in GIT:
+
+ * https://gitea.ladish.org/LADI/appdb[appdb repo at LADI project Gitea]
+ * https://github.com/LADI/appdb[appdb repo of LADI project at GitHub]
+
+See also:
+
+ * https://ladish.org/[LADISH Session Handler]
+
+For related discussions, you are invited to join
+https://libera.chat/[Libera.Chat] channel #ladi
