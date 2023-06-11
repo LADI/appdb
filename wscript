@@ -33,7 +33,6 @@ def options(opt):
 
     opt.add_option('--libdir', type='string', help='Library directory [Default: <prefix>/lib64]')
     opt.add_option('--pkgconfigdir', type='string', help='pkg-config file directory [Default: <libdir>/pkgconfig]')
-    opt.add_option('--debug', action='store_true', default=False, dest='debug', help='Build debuggable binaries')
 
 class WafToolchainFlags:
     """
@@ -143,11 +142,7 @@ def configure(conf):
     else:
         conf.env['PKGCONFDIR'] = conf.env['LIBDIR'] + '/pkgconfig'
 
-    if conf.env['BUILD_DEBUG']:
-        flags.add_candcxx('-g -O0')
-        flags.add_link('-g')
-    else:
-        flags.add_candcxx('-O2')
+    flags.add_c(['-I../include', "-I."])
 
     conf.define('APPDB_VERSION', conf.env['APPDB_VERSION'])
     conf.write_config_header('config.h', remove=False)
@@ -167,7 +162,6 @@ def configure(conf):
 
     conf.msg('Install prefix', conf.env['PREFIX'], color='CYAN')
     conf.msg('Library directory', conf.all_envs['']['LIBDIR'], color='CYAN')
-    display_feature(conf, 'Build debuggable binaries', conf.env['BUILD_DEBUG'])
 
     tool_flags = [
         ('C compiler flags',   ['CFLAGS', 'CPPFLAGS']),
@@ -212,3 +206,12 @@ def git_ver(self):
 
 def build(bld):
     bld(rule=git_ver, target='version.h', update_outputs=True, always=True, ext_out=['.h'])
+
+    prog = bld(features=['c', 'cprogram'])
+    prog.target = 'appdb'
+    for source in [
+            'appdb.c',
+            'catdup.c',
+            'log.c',
+    ]:
+        prog.source.append(os.path.join("src", source))

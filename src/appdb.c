@@ -1,28 +1,13 @@
 /* -*- Mode: C ; c-basic-offset: 2 -*- */
 /*
- * LADI Session Handler (ladish)
+ * appdb - Application database via .desktop files
  *
- * Copyright (C) 2008,2009,2010 Nedko Arnaudov <nedko@arnaudov.name>
+ * Copyright (C) 2008-2023 Nedko Arnaudov
+ * SPDX-License-Identifier: GPL-2.0-or-later
  *
- **************************************************************************
- * This file contains code of the application database
- **************************************************************************
- *
- * LADI Session Handler is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * LADI Session Handler is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with LADI Session Handler. If not, see <http://www.gnu.org/licenses/>
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
- */
+ *******************************************************
+ * This file contains code of the application database *
+ *******************************************************/
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -31,9 +16,11 @@
 #include <dirent.h>
 
 #include "appdb.h"
-#include "../log.h"
-#include "../common/catdup.h"
-#include "../assert.h"
+#include "log.h"
+#include "catdup.h"
+#include "assert.h"
+
+#define UNUSED(x) UNUSED_ ## x __attribute__((unused))
 
 void
 lash_appdb_free_entry(
@@ -301,8 +288,8 @@ lash_appdb_parse_file_data(
     strrstrip(line);
     value = strlstrip(value);
 
-    //log_info("Key=%s", line);
-    //log_info("Value=%s", value);
+    log_info("Key=%s", line);
+    log_info("Value=%s", value);
 
     if (count + 1 == max_count)
     {
@@ -360,7 +347,7 @@ lash_appdb_load_file(
   char ** str_ptr_ptr;
   bool * bool_ptr;
 
-  //log_info("Desktop entry '%s'", file_path);
+  log_info("Desktop entry '%s'", file_path);
 
   ret = true;
 
@@ -723,4 +710,22 @@ lash_appdb_free(
 
     lash_appdb_free_entry(entry_ptr);
   }
+}
+
+int main(int UNUSED(argc), char ** UNUSED(argv))
+{
+  struct list_head apps_list;
+
+  if (!lash_appdb_load(&apps_list))
+  {
+    log_error("Loading of appdb failed");
+    goto free_appdb;
+  }
+
+  goto exit;
+
+free_appdb:
+  lash_appdb_free(&apps_list);
+exit:
+  return 0;
 }

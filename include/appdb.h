@@ -1,33 +1,18 @@
 /* -*- Mode: C ; c-basic-offset: 2 -*- */
 /*
- * LADI Session Handler (ladish)
+ * appdb - Application database via .desktop files
  *
- * Copyright (C) 2008 Nedko Arnaudov <nedko@arnaudov.name>
+ * Copyright (C) 2008-2023 Nedko Arnaudov
+ * SPDX-License-Identifier: GPL-2.0-or-later
  *
- **************************************************************************
- * This file contains interface to the application database code
- **************************************************************************
- *
- * LADI Session Handler is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * LADI Session Handler is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with LADI Session Handler. If not, see <http://www.gnu.org/licenses/>
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
- */
+ *****************************************************************
+ * This file contains interface to the application database code *
+ *****************************************************************/
 
 #ifndef APPDB_H__4839D031_68EF_43F5_BDE2_2317C6B956A9__INCLUDED
 #define APPDB_H__4839D031_68EF_43F5_BDE2_2317C6B956A9__INCLUDED
 
-#include "../common/klist.h"
+#include "klist.h"
 
 /* all strings except name can be not present (NULL) */
 /* all strings are utf-8 */
