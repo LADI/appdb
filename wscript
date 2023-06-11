@@ -142,8 +142,6 @@ def configure(conf):
     else:
         conf.env['PKGCONFDIR'] = conf.env['LIBDIR'] + '/pkgconfig'
 
-    flags.add_c(['-I../include', "-I."])
-
     conf.define('APPDB_VERSION', conf.env['APPDB_VERSION'])
     conf.write_config_header('config.h', remove=False)
 
@@ -165,7 +163,6 @@ def configure(conf):
 
     tool_flags = [
         ('C compiler flags',   ['CFLAGS', 'CPPFLAGS']),
-        ('C++ compiler flags', ['CXXFLAGS', 'CPPFLAGS']),
         ('Linker flags',       ['LINKFLAGS', 'LDFLAGS'])
     ]
     for name, vars in tool_flags:
@@ -207,7 +204,7 @@ def git_ver(self):
 def build(bld):
     bld(rule=git_ver, target='version.h', update_outputs=True, always=True, ext_out=['.h'])
 
-    prog = bld(features=['c', 'cprogram'])
+    prog = bld(features=['c', 'cprogram'], includes = [bld.path.get_bld(), "./include"])
     prog.target = 'appdb'
     for source in [
             'appdb.c',
