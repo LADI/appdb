@@ -16,7 +16,7 @@
 
 /* all strings except name can be not present (NULL) */
 /* all strings are utf-8 */
-struct lash_appdb_entry
+struct appdb_entry
 {
   struct list_head siblings;
   char * name;    /* Specific name of the application, for example "Ingen" */
@@ -28,15 +28,15 @@ struct lash_appdb_entry
   bool terminal;    /* Wheter to run application in terminal */
 };
 
-/* parses .desktop entries in suitable XDG directories and returns list of lash_appdb_entry structs in appdb parameter */
+/* parses .desktop entries in suitable XDG directories and returns list of appdb_entry structs in appdb parameter */
 /* returns success status */
 bool
-lash_appdb_load(
+appdb_load(
   struct list_head * appdb);
 
-/* free list of lash_appdb_entry structs, as returned by lash_appdb_load() */
+/* free list of appdb_entry structs, as returned by appdb_load() */
 void
-lash_appdb_free(
+appdb_free(
   struct list_head * appdb);
 
 #endif /* #ifndef APPDB_H__4839D031_68EF_43F5_BDE2_2317C6B956A9__INCLUDED */

@@ -22,63 +22,64 @@
 
 #define UNUSED(x) UNUSED_ ## x __attribute__((unused))
 
+static
 void
-lash_appdb_free_entry(
-  struct lash_appdb_entry * entry_ptr);
+appdb_free_entry(
+  struct appdb_entry * entry_ptr);
 
 #define MAP_TYPE_STRING  0
 #define MAP_TYPE_BOOL    1
 
-struct map
+struct appdb_map
 {
   const char * key;
   unsigned int type;
   size_t offset;
 };
 
-struct map g_appdb_entry_map[] = 
+static struct appdb_map g_appdb_entry_map[] =
 {
   {
     .key = "Name",
     .type = MAP_TYPE_STRING,
-    .offset = offsetof(struct lash_appdb_entry, name)
+    .offset = offsetof(struct appdb_entry, name)
   },
   {
     .key = "GenericName",
     .type = MAP_TYPE_STRING,
-    .offset = offsetof(struct lash_appdb_entry, generic_name)
+    .offset = offsetof(struct appdb_entry, generic_name)
   },
   {
     .key = "Comment",
     .type = MAP_TYPE_STRING,
-    .offset = offsetof(struct lash_appdb_entry, comment)
+    .offset = offsetof(struct appdb_entry, comment)
   },
   {
     .key = "Icon",
     .type = MAP_TYPE_STRING,
-    .offset = offsetof(struct lash_appdb_entry, icon)
+    .offset = offsetof(struct appdb_entry, icon)
   },
   {
     .key = "Exec",
     .type = MAP_TYPE_STRING,
-    .offset = offsetof(struct lash_appdb_entry, exec)
+    .offset = offsetof(struct appdb_entry, exec)
   },
   {
     .key = "Path",
     .type = MAP_TYPE_STRING,
-    .offset = offsetof(struct lash_appdb_entry, path)
+    .offset = offsetof(struct appdb_entry, path)
   },
   {
     .key = "Terminal",
     .type = MAP_TYPE_BOOL,
-    .offset = offsetof(struct lash_appdb_entry, terminal)
+    .offset = offsetof(struct appdb_entry, terminal)
   },
   {
     .key = NULL,
   }
 };
 
-struct entry
+struct appdb_kv_entry
 {
   const char * key;
   const char * value;
@@ -88,7 +89,7 @@ struct entry
 
 static
 const char *
-get_xdg_var(
+appdb_get_xdg_var(
   const char * var_name,
   const char * default_value)
 {
@@ -107,7 +108,7 @@ get_xdg_var(
 
 static
 bool
-suffix_match(
+appdb_suffix_match(
   const char * string,
   const char * suffix)
 {
@@ -132,7 +133,7 @@ suffix_match(
 
 static
 bool
-load_file_data(
+appdb_load_file_data(
   const char * file_path,
   char ** data_ptr_ptr)
 {
@@ -201,8 +202,9 @@ exit:
   return ret;
 }
 
+static
 char *
-strlstrip(char * string)
+appdb_strlstrip(char * string)
 {
   while (*string == ' ' || *string == '\t')
   {
@@ -212,8 +214,9 @@ strlstrip(char * string)
   return string;
 }
 
+static
 void
-strrstrip(char * string)
+appdb_strrstrip(char * string)
 {
   char * temp;
 
@@ -230,10 +233,11 @@ strrstrip(char * string)
   }
 }
 
+static
 bool
-lash_appdb_parse_file_data(
+appdb_parse_file_data(
   char * data,
-  struct entry * entries_array,
+  struct appdb_kv_entry * entries_array,
   size_t max_count,
   size_t * count_ptr)
 {
@@ -287,8 +291,8 @@ lash_appdb_parse_file_data(
     value++;
 
     /* strip spaces */
-    strrstrip(line);
-    value = strlstrip(value);
+    appdb_strrstrip(line);
+    value = appdb_strlstrip(value);
 
     log_info("Key=%s", line);
     log_info("Value=%s", value);
@@ -312,9 +316,10 @@ exit:
   return group_found;
 }
 
+static
 const char *
-lash_appdb_find_key(
-  struct entry * entries,
+appdb_find_key(
+  struct appdb_kv_entry * entries,
   size_t count,
   const char * key)
 {
@@ -331,21 +336,22 @@ lash_appdb_find_key(
   return NULL;
 }
 
+static
 bool
-lash_appdb_load_file(
+appdb_load_file(
   struct list_head * appdb,
   const char * file_path)
 {
   char * data;
   bool ret;
-  struct entry entries[MAX_ENTRIES];
+  struct appdb_kv_entry entries[MAX_ENTRIES];
   size_t entries_count;
   const char * value;
   const char * name;
   const char * xlash;
   struct list_head * node_ptr;
-  struct lash_appdb_entry * entry_ptr;
-  struct map * map_ptr;
+  struct appdb_entry * entry_ptr;
+  struct appdb_map * map_ptr;
   char ** str_ptr_ptr;
   bool * bool_ptr;
 
@@ -353,7 +359,7 @@ lash_appdb_load_file(
 
   ret = true;
 
-  if (!load_file_data(file_path, &data))
+  if (!appdb_load_file_data(file_path, &data))
   {
     ret = false;
     goto exit;
@@ -364,7 +370,7 @@ lash_appdb_load_file(
     goto exit;
   }
 
-  if (!lash_appdb_parse_file_data(data, entries, MAX_ENTRIES, &entries_count))
+  if (!appdb_parse_file_data(data, entries, MAX_ENTRIES, &entries_count))
   {
     goto exit_free_data;
   }
@@ -372,21 +378,21 @@ lash_appdb_load_file(
   //log_info("%llu entries", (unsigned long long)entries_count);
 
   /* check whether entry is of "Application" type */
-  value = lash_appdb_find_key(entries, entries_count, "Type");
+  value = appdb_find_key(entries, entries_count, "Type");
   if (value == NULL || strcmp(value, "Application") != 0)
   {
     goto exit_free_data;
   }
 
   /* check whether "Name" is preset, it is required */
-  name = lash_appdb_find_key(entries, entries_count, "Name");
+  name = appdb_find_key(entries, entries_count, "Name");
   if (name == NULL)
   {
     goto exit_free_data;
   }
 
   /* check whether entry has LIBLASH or LASHCLASS key */
-  xlash = lash_appdb_find_key(entries, entries_count, "X-LASH");
+  xlash = appdb_find_key(entries, entries_count, "X-LASH");
   if (xlash == NULL)
   {
     goto exit_free_data;
@@ -395,7 +401,7 @@ lash_appdb_load_file(
   /* check whether entry already exists (first found entries have priority according to XDG Base Directory Specification) */
   list_for_each(node_ptr, appdb)
   {
-    entry_ptr = list_entry(node_ptr, struct lash_appdb_entry, siblings);
+    entry_ptr = list_entry(node_ptr, struct appdb_entry, siblings);
 
     if (strcmp(entry_ptr->name, name) == 0)
     {
@@ -406,20 +412,20 @@ lash_appdb_load_file(
   //log_info("Application '%s' found", name);
 
   /* allocate new entry */
-  entry_ptr = malloc(sizeof(struct lash_appdb_entry));
+  entry_ptr = malloc(sizeof(struct appdb_entry));
   if (entry_ptr == NULL)
   {
     log_error("malloc() failed");
     goto fail_free_data;
   }
 
-  memset(entry_ptr, 0, sizeof(struct lash_appdb_entry));
+  memset(entry_ptr, 0, sizeof(struct appdb_entry));
 
   /* fill the entry */
   map_ptr = g_appdb_entry_map;
   while (map_ptr->key != NULL)
   {
-    value = lash_appdb_find_key(entries, entries_count, map_ptr->key);
+    value = appdb_find_key(entries, entries_count, map_ptr->key);
     if (value == NULL)
     {
       ASSERT(strcmp(map_ptr->key, "Name") != 0); /* name is required and we already checked this */
@@ -470,7 +476,7 @@ lash_appdb_load_file(
   goto exit_free_data;
 
 fail_free_entry:
-  lash_appdb_free_entry(entry_ptr);
+  appdb_free_entry(entry_ptr);
 
 fail_free_data:
   ret = false;
@@ -482,8 +488,9 @@ exit:
   return ret;
 }
 
+static
 bool
-lash_appdb_load_dir(
+appdb_load_dir(
   struct list_head * appdb,
   const char * base_directory)
 {
@@ -493,7 +500,7 @@ lash_appdb_load_dir(
   struct dirent * dentry_ptr;
   char * file_path;
 
-  //log_info("lash_appdb_load_dir() called for '%s'.", base_directory);
+  //log_info("appdb_load_dir() called for '%s'.", base_directory);
 
   ret = false;
 
@@ -516,7 +523,7 @@ lash_appdb_load_dir(
         continue;
       }
 
-      if (!suffix_match(dentry_ptr->d_name, ".desktop"))
+      if (!appdb_suffix_match(dentry_ptr->d_name, ".desktop"))
       {
         continue;
       }
@@ -528,7 +535,7 @@ lash_appdb_load_dir(
       }
       else
       {
-        if (!lash_appdb_load_file(appdb, file_path))
+        if (!appdb_load_file(appdb, file_path))
         {
           free(file_path);
           goto fail_free_path;
@@ -555,7 +562,7 @@ fail:
 }
 
 bool
-lash_appdb_load_dirs(
+appdb_load_dirs(
   struct list_head * appdb,
   const char * base_directories)
 {
@@ -580,7 +587,7 @@ lash_appdb_load_dirs(
       *limiter = 0;
     }
 
-    if (!lash_appdb_load_dir(appdb, directory))
+    if (!appdb_load_dir(appdb, directory))
     {
       free(directories);
       return false;
@@ -596,7 +603,7 @@ lash_appdb_load_dirs(
 }
 
 bool
-lash_appdb_load(
+appdb_load(
   struct list_head * appdb)
 {
   const char * data_home;
@@ -609,7 +616,7 @@ lash_appdb_load(
 
   INIT_LIST_HEAD(appdb);
 
-  //log_info("lash_appdb_load() called.");
+  //log_info("appdb_load() called.");
 
   home_dir = getenv("HOME");
   if (home_dir == NULL)
@@ -625,16 +632,16 @@ lash_appdb_load(
     goto fail;
   }
 
-  data_home = get_xdg_var("XDG_DATA_HOME", data_home_default);
+  data_home = appdb_get_xdg_var("XDG_DATA_HOME", data_home_default);
 
-  if (!lash_appdb_load_dir(appdb, data_home))
+  if (!appdb_load_dir(appdb, data_home))
   {
     goto fail_free_data_home_default;
   }
 
-  data_dirs = get_xdg_var("XDG_DATA_DIRS", "/usr/local/share/:/usr/share/");
+  data_dirs = appdb_get_xdg_var("XDG_DATA_DIRS", "/usr/local/share/:/usr/share/");
 
-  if (!lash_appdb_load_dirs(appdb, data_dirs))
+  if (!appdb_load_dirs(appdb, data_dirs))
   {
     goto fail_free_data_home_default;
   }
@@ -647,17 +654,18 @@ fail_free_data_home_default:
 fail:
   if (!ret)
   {
-    lash_appdb_free(appdb);
+    appdb_free(appdb);
   }
 
   return ret;
 }
 
+static
 void
-lash_appdb_free_entry(
-  struct lash_appdb_entry * entry_ptr)
+appdb_free_entry(
+  struct appdb_entry * entry_ptr)
 {
-  //log_info("lash_appdb_free_entry() called.");
+  //log_info("appdb_free_entry() called.");
 
   if (entry_ptr->name != NULL)
   {
@@ -693,24 +701,24 @@ lash_appdb_free_entry(
 }
 
 void
-lash_appdb_free(
+appdb_free(
   struct list_head * appdb)
 {
   struct list_head * node_ptr;
-  struct lash_appdb_entry * entry_ptr;
+  struct appdb_entry * entry_ptr;
 
-  //log_info("lash_appdb_free() called.");
+  //log_info("appdb_free() called.");
 
   while (!list_empty(appdb))
   {
     node_ptr = appdb->next;
-    entry_ptr = list_entry(node_ptr, struct lash_appdb_entry, siblings);
+    entry_ptr = list_entry(node_ptr, struct appdb_entry, siblings);
 
     list_del(node_ptr);
 
     //log_info("Destroying appdb entry '%s'", entry_ptr->name);
 
-    lash_appdb_free_entry(entry_ptr);
+    appdb_free_entry(entry_ptr);
   }
 }
 
@@ -718,7 +726,7 @@ int main(int UNUSED(argc), char ** UNUSED(argv))
 {
   struct list_head apps_list;
 
-  if (!lash_appdb_load(&apps_list))
+  if (!appdb_load(&apps_list))
   {
     log_error("Loading of appdb failed");
     goto free_appdb;
@@ -727,7 +735,7 @@ int main(int UNUSED(argc), char ** UNUSED(argv))
   goto exit;
 
 free_appdb:
-  lash_appdb_free(&apps_list);
+  appdb_free(&apps_list);
 exit:
   return 0;
 }
