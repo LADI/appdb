@@ -122,7 +122,7 @@ suffix_match(
     return false;
   }
 
-  if (memcmp(string + (len - len_suffix), ".desktop", len_suffix) != 0)
+  if (memcmp(string + (len - len_suffix), suffix, len_suffix) != 0)
   {
     return false;
   }
@@ -141,7 +141,7 @@ load_file_data(
   bool ret;
   char * data_ptr;
 
-  ret = true;
+  ret = false;
   *data_ptr_ptr = NULL;
 
   file = fopen(file_path, "r");
@@ -187,6 +187,8 @@ load_file_data(
   data_ptr[size] = 0;
 
   *data_ptr_ptr = data_ptr;
+
+  ret = true;
   goto exit_close;
 
 exit_free_data:
