@@ -294,8 +294,8 @@ appdb_parse_file_data(
     appdb_strrstrip(line);
     value = appdb_strlstrip(value);
 
-    log_info("Key=%s", line);
-    log_info("Value=%s", value);
+    //log_info("    Key=%s", line);
+    //log_info("    Value=%s", value);
 
     if (count + 1 == max_count)
     {
@@ -355,7 +355,8 @@ appdb_load_file(
   char ** str_ptr_ptr;
   bool * bool_ptr;
 
-  log_info("Desktop entry '%s'", file_path);
+  //log_info("=========================");
+  //log_info("Desktop entry '%s'", file_path);
 
   ret = true;
 
@@ -395,7 +396,7 @@ appdb_load_file(
   xlash = appdb_find_key(entries, entries_count, "X-LASH");
   if (xlash == NULL)
   {
-    goto exit_free_data;
+    //goto exit_free_data;
   }
 
   /* check whether entry already exists (first found entries have priority according to XDG Base Directory Specification) */
@@ -409,7 +410,7 @@ appdb_load_file(
     }
   }
 
-  //log_info("Application '%s' found", name);
+  log_info("Application '%s' found", name);
 
   /* allocate new entry */
   entry_ptr = malloc(sizeof(struct appdb_entry));
