@@ -722,21 +722,3 @@ appdb_free(
     appdb_free_entry(entry_ptr);
   }
 }
-
-int main(int UNUSED(argc), char ** UNUSED(argv))
-{
-  struct list_head apps_list;
-
-  if (!appdb_load(&apps_list))
-  {
-    log_error("Loading of appdb failed");
-    goto free_appdb;
-  }
-
-  goto exit;
-
-free_appdb:
-  appdb_free(&apps_list);
-exit:
-  return 0;
-}

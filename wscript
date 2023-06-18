@@ -123,6 +123,20 @@ def configure(conf):
 
     conf.load('autooptions')
 
+    conf.check_cfg(
+        package = 'dbus-1',
+        atleast_version = '1.0.0',
+        mandatory = True,
+        errmsg = "not installed, see http://dbus.freedesktop.org/",
+        args = '--cflags --libs')
+
+    conf.check_cfg(
+        package = 'cdbus-1',
+        atleast_version = '1.0.0',
+        mandatory = True,
+        errmsg = "not installed, see https://github.com/LADI/cdbus",
+        args = '--cflags --libs')
+
     #conf.env['LIB_PTHREAD'] = ['pthread']
     #conf.env['LIB_DL'] = ['dl']
     #conf.env['LIB_RT'] = ['rt']
@@ -205,9 +219,11 @@ def build(bld):
     bld(rule=git_ver, target='version.h', update_outputs=True, always=True, ext_out=['.h'])
 
     prog = bld(features=['c', 'cprogram'], includes = [bld.path.get_bld(), "./include"])
+    prog.uselib = ['DBUS-1', 'CDBUS-1']
     prog.target = 'appdb'
     for source in [
             'appdb.c',
+            'daemon.c',
             'catdup.c',
             'log.c',
     ]:
