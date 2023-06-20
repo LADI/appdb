@@ -94,6 +94,7 @@ static void disconnect_dbus(void)
   //cdbus_object_path_destroy(cdbus_g_dbus_connection, g_control_object);
   dbus_connection_unref(cdbus_g_dbus_connection);
   cdbus_call_last_error_cleanup();
+  log_info("Disconnected from local session bus");
 }
 
 void term_signal_handler(int signum)
