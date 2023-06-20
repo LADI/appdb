@@ -24,6 +24,12 @@
 //#include "dirhelpers.h"
 
 #define UNUSED(x) UNUSED_ ## x __attribute__((unused))
+#define ANSI_BOLD_ON    "\033[1m"
+#define ANSI_BOLD_OFF   "\033[22m"
+#define ANSI_COLOR_RED  "\033[31m"
+#define ANSI_COLOR_YELLOW "\033[33m"
+#define ANSI_RESET      "\033[0m"
+
 #define LOG_OUTPUT_STDOUT
 
 #define DEFAULT_XDG_LOG "/.log"
@@ -155,11 +161,11 @@ void appdb_log_init()
 #endif  /* #if !defined(LOG_OUTPUT_STDOUT) */
 
 #if 0
-# define log_debug(fmt, args...) appdb_log(APPDB_LOG_LEVEL_DEBUG, "%s:%d:%s: " fmt "\n", __FILE__, __LINE__, __func__, ## args)
-# define log_info(fmt, args...) appdb_log(APPDB_LOG_LEVEL_INFO, fmt "\n", ## args)
-# define log_warn(fmt, args...) appdb_log(APPDB_LOG_LEVEL_WARN, ANSI_COLOR_YELLOW "WARNING: " ANSI_RESET "%s: " fmt "\n", __func__, ## args)
-# define log_error(fmt, args...) appdb_log(APPDB_LOG_LEVEL_ERROR, ANSI_COLOR_RED "ERROR: " ANSI_RESET "%s: " fmt "\n", __func__, ## args)
-# define log_error_plain(fmt, args...) appdb_log(APPDB_LOG_LEVEL_ERROR_PLAIN, ANSI_COLOR_RED "ERROR: " ANSI_RESET fmt "\n", ## args)
+# define log_debug(fmt, args...) appdb_log(LOG_LEVEL_DEBUG, "%s:%d:%s: " fmt "\n", __FILE__, __LINE__, __func__, ## args)
+# define log_info(fmt, args...) appdb_log(LOG_LEVEL_INFO, fmt "\n", ## args)
+# define log_warn(fmt, args...) appdb_log(LOG_LEVEL_WARN, ANSI_COLOR_YELLOW "WARNING: " ANSI_RESET "%s: " fmt "\n", __func__, ## args)
+# define log_error(fmt, args...) appdb_log(LOG_LEVEL_ERROR, ANSI_COLOR_RED "ERROR: " ANSI_RESET "%s: " fmt "\n", __func__, ## args)
+# define log_error_plain(fmt, args...) appdb_log(LOG_LEVEL_ERROR_PLAIN, ANSI_COLOR_RED "ERROR: " ANSI_RESET fmt "\n", ## args)
 #endif
 
 static
@@ -170,7 +176,7 @@ appdb_log_enabled(
   unsigned int UNUSED(line),
   const char * UNUSED(func))
 {
-  return level != APPDB_LOG_LEVEL_DEBUG;
+  return level != LOG_LEVEL_DEBUG;
 }
 
 void
@@ -205,13 +211,13 @@ appdb_log(
   {
     switch (level)
     {
-    case APPDB_LOG_LEVEL_DEBUG:
-    case APPDB_LOG_LEVEL_INFO:
+    case LOG_LEVEL_DEBUG:
+    case LOG_LEVEL_INFO:
       stream = stdout;
       break;
-    case APPDB_LOG_LEVEL_WARN:
-    case APPDB_LOG_LEVEL_ERROR:
-    case APPDB_LOG_LEVEL_ERROR_PLAIN:
+    case LOG_LEVEL_WARN:
+    case LOG_LEVEL_ERROR:
+    case LOG_LEVEL_ERROR_PLAIN:
     default:
       stream = stderr;
     }
@@ -228,14 +234,14 @@ appdb_log(
   color = NULL;
   switch (level)
   {
-  case APPDB_LOG_LEVEL_DEBUG:
+  case LOG_LEVEL_DEBUG:
     fprintf(stream, "%s:%d:%s ", file, line, func);
     break;
-  case APPDB_LOG_LEVEL_WARN:
+  case LOG_LEVEL_WARN:
     color = ANSI_COLOR_YELLOW;
     break;
-  case APPDB_LOG_LEVEL_ERROR:
-  case APPDB_LOG_LEVEL_ERROR_PLAIN:
+  case LOG_LEVEL_ERROR:
+  case LOG_LEVEL_ERROR_PLAIN:
     color = ANSI_COLOR_RED;
     break;
   }
