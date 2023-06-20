@@ -129,6 +129,15 @@ int main(int UNUSED(argc), char ** UNUSED(argv))
 
   ret = EXIT_FAILURE;
 
+  /* install the signal handlers */
+  install_term_signal_handler(SIGTERM, false);
+  install_term_signal_handler(SIGINT, true);
+  install_term_signal_handler(SIGHUP, true);
+  if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
+  {
+    log_error("signal(SIGPIPE, SIG_IGN).");
+  }
+
   if (!appdb_load(&apps_list))
   {
     log_error("Loading of appdb failed");
