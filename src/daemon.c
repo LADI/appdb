@@ -20,8 +20,8 @@
 #define APPDB_DBUS_SERVICE_NAME "org.ladish.appdb"
 
 #include "log.h"
-#include "klist.h"
-#include "appdb.h"
+#include "appdb/klist.h"
+#include "appdb/appdb.h"
 
 #define UNUSED(x) UNUSED_ ## x __attribute__((unused))
 

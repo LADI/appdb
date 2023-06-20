@@ -15,7 +15,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-#include "appdb.h"
+#include "appdb/appdb.h"
 #include "log.h"
 #include "catdup.h"
 #include "assert.h"
