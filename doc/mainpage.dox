@@ -1,0 +1,5 @@
+/** @mainpage Application database via .desktop files
+ *
+ * Files with .desktop (XDG) extension are searched and
+ * in-memory set ("database") is maintained.
+ */
