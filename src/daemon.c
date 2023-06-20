@@ -136,7 +136,7 @@ int main(int UNUSED(argc), char ** UNUSED(argv))
 
   if (!connect_dbus())
   {
-    log_error("Failed to connecto to D-Bus");
+    log_error("Failed to connect to D-Bus");
     goto free_appdb;
   }
 
