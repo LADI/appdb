@@ -9,7 +9,6 @@
  * This file contains code of the appdb daemon *
  ***********************************************/
 
-#include <stdbool.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <string.h>
@@ -17,13 +16,7 @@
 
 #include <cdbus/cdbus.h>
 
-#define APPDB_DBUS_SERVICE_NAME "org.ladish.appdb"
-
-#include "log.h"
-#include "appdb/klist.h"
-#include "appdb/appdb.h"
-
-#define UNUSED(x) UNUSED_ ## x __attribute__((unused))
+#include "common.h"
 
 bool g_quit;
 const char * g_dbus_unique_name;

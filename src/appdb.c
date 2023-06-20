@@ -9,18 +9,17 @@
  * This file contains code of the application database *
  *******************************************************/
 
-#include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <dirent.h>
 
+#include "common.h"
 #include "appdb/appdb.h"
 #include "log.h"
 #include "catdup.h"
 #include "assert.h"
-
-#define UNUSED(x) UNUSED_ ## x __attribute__((unused))
 
 static
 void

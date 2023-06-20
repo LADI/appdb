@@ -12,18 +12,17 @@
 
 #include "config.h"
 
-#include <stdbool.h>
 #include <errno.h>
 #include <time.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <sys/stat.h>
 
+#include "common.h"
 #include "log.h"
 #include "catdup.h"
 //#include "dirhelpers.h"
 
-#define UNUSED(x) UNUSED_ ## x __attribute__((unused))
 #define ANSI_BOLD_ON    "\033[1m"
 #define ANSI_BOLD_OFF   "\033[22m"
 #define ANSI_COLOR_RED  "\033[31m"
