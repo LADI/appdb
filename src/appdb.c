@@ -2,7 +2,7 @@
 /*
  * appdb - Application database via .desktop files
  *
- * Copyright (C) 2008-2023 Nedko Arnaudov
+ * SPDX-FileCopyrightText: Copyright © 2008-2023 Nedko Arnaudov
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
  *******************************************************
